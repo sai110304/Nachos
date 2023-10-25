@@ -48,7 +48,7 @@ void StartProcess_2(void* pid) {
                     // by doing the syscall "exit"
 }
 
-int PCB::Exec(char* filename, int id,int priority) {
+int PCB::Exec(char* filename, int id) {
     // cerr << filename << ' ' << pid << endl;
     multex->P();
 
@@ -61,7 +61,6 @@ int PCB::Exec(char* filename, int id,int priority) {
 
     //  Đặt processID của thread này là id.
     this->thread->processID = id;
-    this->thread->ThreadPriority=priority;
     // Đặt parrentID của thread này là processID của thread gọi thực thi Exec
     this->parentID = kernel->currentThread->processID;
     // Gọi thực thi Fork(StartProcess_2,id) => Ta cast thread thành kiểu int,

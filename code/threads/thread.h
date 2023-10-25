@@ -90,7 +90,7 @@ class Thread {
     int processID;
     int parrentID;
     int p;
-    int ThreadPriority;
+    // int ThreadPriority;
     int exitStatus;
     int wakeupTime;
     void FreeSpace() {
