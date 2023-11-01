@@ -184,6 +184,43 @@ AddrSpace::AddrSpace(char *fileName) {
     return;
 }
 
+
+AddrSpace::AddrSpace(AddrSpace* ParentSpace) {
+    unsigned int i, size, j, offset;
+    unsigned int numCodePage,
+        numDataPage;  // số trang cho phần code và phần initData
+    int lastCodePageSize, lastDataPageSize, firstDataPageSize,
+        tempDataSize;  // kích thước ghi vào trang cuối Code, initData, và trang
+                       // đầu của initData
+
+    
+    //DEBUG(dbgAddr, "Initializing address space: " << numPages << ", " << size);
+    // first, set up the translation
+    kernel->addrLock->P();
+    numPages=ParentSpace->numPages;
+    pageTable = new TranslationEntry[numPages];
+    for (i = 0; i < numPages; i++) {
+        pageTable[i].virtualPage = i;  // for now, virtual page # = phys page #
+        pageTable[i].physicalPage = kernel->gPhysPageBitMap->FindAndSet();
+        // cerr << pageTable[i].physicalPage << endl;
+        pageTable[i].valid = TRUE;
+        pageTable[i].use = FALSE;
+        pageTable[i].dirty = FALSE;
+        pageTable[i].readOnly = FALSE;  // if the code segment was entirely on
+        // a separate page, we could set its
+        // pages to be read-only
+        // xóa các trang này trên memory
+        memcpy(&(kernel->machine
+                    ->mainMemory[pageTable[i].physicalPage * PageSize]),&(kernel->machine
+                    ->mainMemory[parentSpace->pageTable[i].physicalPage * PageSize]),
+              PageSize);
+
+        DEBUG(dbgAddr, "phyPage " << pageTable[i].physicalPage);
+    }
+
+    kernel->addrLock->V();
+    return;
+}
 //----------------------------------------------------------------------
 // AddrSpace::Execute
 // 	Run a user program using the current thread
@@ -195,8 +232,14 @@ AddrSpace::AddrSpace(char *fileName) {
 
 void AddrSpace::Execute() {
     kernel->currentThread->space = this;
-
-    this->InitRegisters();  // set the initial register values
+    
+    // this->InitRegisters();  // set the initial register values
+    if(kernel->currentThread->isClone){
+        kernel->currentThread->SaveUserState();
+    }
+    else{
+        this->InitRegisters();  // set the initial register values
+    }
     this->RestoreState();   // load page table register
 
     kernel->machine->Run();  // jump to the user progam

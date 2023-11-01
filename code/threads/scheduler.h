@@ -33,12 +33,12 @@ class Scheduler {
     };
 
 
-    class comp2{
-      public:
-         bool operator()(Thread* a, Thread *b){
-            return a->ThreadPriority > b->ThreadPriority;
-         }
-    };
+   //  class comp2{
+   //    public:
+   //       bool operator()(Thread* a, Thread *b){
+   //          return a->ThreadPriority > b->ThreadPriority;
+   //       }
+   //  };
     void ReadyToRun(Thread* thread);
     // Thread can be dispatched.
     Thread* FindNextToRun();  // Dequeue first thread on the ready
@@ -52,7 +52,7 @@ class Scheduler {
     // SelfTest for scheduler is implemented in class Thread
    priority_queue<Thread* ,vector<Thread*>, comp > sleepList;
 
-   priority_queue<Thread* ,vector<Thread*>, comp2 > PriorList;
+   // priority_queue<Thread* ,vector<Thread*>, comp2 > PriorList;
 
    List<Thread*>* readyList;
    private:

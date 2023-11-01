@@ -50,6 +50,7 @@
 #define SC_GetPid 54
 #define SC_PrintStringUC 55
 #define SC_Sleep 56
+#define SC_VFork 57
 
 #ifndef IN_ASM
 
@@ -89,6 +90,8 @@ void PrintString(char *buffer);
 void PrintStringUC(char *buffer);
 
 void Sleep(int seconds);
+
+int VFork(char *buffer);
 
 /* Address space control operations: Exit, Exec, Execv, and Join */
 
