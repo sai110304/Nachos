@@ -138,6 +138,19 @@ void SysPrintStringUC(char* buffer, int length) {
     }
 }
 
+void SysVFork(char* buffer){
+    OpenFile* oFile = kernel->fileSystem->Open(name);
+    if (oFile == NULL) {
+        DEBUG(dbgSys, "\nExec:: Can't open this file.");
+        return -1;
+    }
+
+    delete oFile;
+
+    // Return child process id
+    return kernel->pTab->ExecUpdate2(name);
+}
+
 bool SysCreateFile(char* fileName) {
     bool success;
     int fileNameLength = strlen(fileName);
@@ -207,7 +220,7 @@ int SysExec(char* name) {
     delete oFile;
 
     // Return child process id
-    return kernel->pTab->ExecUpdate(name);
+    return kernel->pTab->ExecUpdate2(name);
 }
 
 int SysJoin(int id) { return kernel->pTab->JoinUpdate(id); }

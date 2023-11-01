@@ -216,6 +216,24 @@ void handle_SC_PrintStringUC() {
     return move_program_counter();
 }
 
+void handle_SC_VFork(){
+    int virtAddr;
+    virtAddr = kernel->machine->ReadRegister(4);  // doc dia chi ten chuong trinh tu thanh ghi r4
+    char* name;
+    name = stringUser2System(virtAddr);  // Lay ten chuong trinh, nap vao kernel
+    if (name == NULL) {
+        DEBUG(dbgSys, "\n Not enough memory in System");
+        ASSERT(false);
+        kernel->machine->WriteRegister(2, -1);
+        return move_program_counter();
+    }
+    kernel->machine->WriteRegister(2, SysVFork(name));
+    // DO NOT DELETE NAME, THE THEARD WILL DELETE IT LATER
+    // delete[] name;
+
+    return move_program_counter();
+}
+
 void handle_SC_Sleep() {
     int seconds = kernel->machine->ReadRegister(4);  
     SysSleep(seconds);
@@ -314,10 +332,10 @@ void handle_SC_Seek() {
  */
 void handle_SC_Exec() {
     int virtAddr;
-    int priority;
+    // int priority;
     virtAddr = kernel->machine->ReadRegister(4);  // doc dia chi ten chuong trinh tu thanh ghi r4
     char* name;
-    priority=kernel->machine->ReadRegister(5);
+    // priority=kernel->machine->ReadRegister(5);
     name = stringUser2System(virtAddr);  // Lay ten chuong trinh, nap vao kernel
     if (name == NULL) {
         DEBUG(dbgSys, "\n Not enough memory in System");
@@ -459,6 +477,8 @@ void ExceptionHandler(ExceptionType which) {
                     return handle_SC_PrintStringUC();
                 case SC_Sleep:
                     return handle_SC_Sleep();
+                case SC_VFork:
+                    return handle_SC_VFork();
                 case SC_CreateFile:
                     return handle_SC_CreateFile();
                 case SC_Open:

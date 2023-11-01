@@ -90,6 +90,8 @@ class Thread {
     int processID;
     int parrentID;
     int p;
+    Thread* parentThread;
+    bool isClone=False;
     // int ThreadPriority;
     int exitStatus;
     int wakeupTime;
