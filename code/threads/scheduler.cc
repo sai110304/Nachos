@@ -82,27 +82,7 @@ Thread *Scheduler::FindNextToRun() {
     if (readyList->IsEmpty()) {
         return NULL;
     } else {
-        List<Thread*>* processes=new List<Thread *>;
-        int x=-1;
-        Thread* th;
-        while(!readyList->IsEmpty())
-        {
-            Thread* current=readyList->RemoveFront();
-            if(current->p > x) {
-                x=current->p;
-                th=current;
-            }
-            processes->Append(current);
-        }
-        while(!processes->IsEmpty())
-        {
-            Thread* x=processes->RemoveFront();
-            if(x!=th)
-            {
-                readyList->Append(x);
-            }
-        }
-        return th;
+        return readyList->RemoveFront();
     }
 }
 
@@ -128,12 +108,9 @@ void Scheduler::Run(Thread *nextThread, bool finishing) {
 
     ASSERT(kernel->interrupt->getLevel() == IntOff);
 
-
-
-
     if (finishing) {  // mark that we need to delete current thread
         ASSERT(toBeDestroyed == NULL);
-        toBeDestroyed = oldThread; nm123
+        toBeDestroyed = oldThread;
     }
 
     if (oldThread->space != NULL) {  // if this thread is a user program,
