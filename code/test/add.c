@@ -14,7 +14,7 @@ int main() {
     //PrintString("Bye");
     PrintString("HELLO\n");
     Exec("add2");
-    Sleep(500000);
+    Sleep(50000);
     while(1){
         for(i=0;i<1000;i++)
         {
